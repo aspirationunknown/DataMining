@@ -13,3 +13,11 @@ K-Means Clustering:
 		9. Send new centroid locations to all nodes
 	Repeat steps 6 - 9 until stop condition met
 */
+
+/*
+Other parts of the program:
+	Command line arguments: <number of nodes> <number of clusters>
+	Need to determine what type of data structure to use for record container
+	Partition data into n groups and send to nodes (n is the number of nodes)
+	Calculate timings (should be done by root node only)
+*/
