@@ -14,28 +14,41 @@
 * \usage ./mpi_cluster <number of nodes> <number of clusters>
 *
 * **************************************************************************/
-#include <mpi.h>
+//#include <mpi.h>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "clustering.h"
 
 
 int main(int argc, char* argv[])
 {
-
+	int i; //loop counter
+	int n_centroids;
+	point* centroids;
 	//start out with k-means clustering algorithm
 	//then convert into parallel version with proper MPI send/recv
 
 	//seed random number generator
+	srand(time(NULL));
 
 	//determine range for x and y values for choosing random points
-
+	
 	//read in records from data file and store in a dynamically allocated
 	//array of records
 
+	//create the dynamic array for the centroids, using the value in argv[2]
+	n_centroids = atoi(argv[2]);
+	centroids = new(std::nothrow) point[n_centroids];
+
 	//start timing
 
-	//create argv[2] number of random centroids and store in an array
-	//use a dynamic array of points
+	//create n_centroids number of random centroids and store in an array
+	for(i = 0; i < n_centroids; ++i)
+	{
+		centroids[i].x = rand() % 100;
+		centroids[i].y = rand() % 100;
+	}
 
 	//calculate distance from each centroid to each point, storing
 	//the index of the closest centroid to that point in the record
@@ -60,6 +73,9 @@ int main(int argc, char* argv[])
 	//closest to them. make this a csv file with the following format:
 	//centroid index, record x coordinate, record y coordinate 
 	//have only one record per line.
+
+	//deallocate centroids array
+	delete [] centroids;
 
 	return 0;
 }

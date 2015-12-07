@@ -6,8 +6,8 @@
 
 struct point
 {
-	double x;
-	double y;
+	int x;
+	int y;
 };
 
 struct record
