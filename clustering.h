@@ -6,8 +6,8 @@
 
 struct point
 {
-	int x;
-	int y;
+	double lat; //lattitude
+	double lon; //longitude
 };
 
 struct record
