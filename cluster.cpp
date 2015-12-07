@@ -20,4 +20,6 @@ Other parts of the program:
 	Need to determine what type of data structure to use for record container
 	Partition data into n groups and send to nodes (n is the number of nodes)
 	Calculate timings (should be done by root node only)
+	Need to determine which attributes to cluster on
+	
 */
