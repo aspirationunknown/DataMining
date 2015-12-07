@@ -5,9 +5,9 @@
 *
 * \date December 9, 2015
 *
-* \professor Dr. Qiao
+* \professor Dr. Karlsson
 *
-* \class CSC 545 - Networking
+* \class CSC 692 - Data Mining
 *
 * \description
 *
