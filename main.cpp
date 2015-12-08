@@ -26,5 +26,7 @@ int main(int argc, char const *argv[])
 		std::cout << "failure" << std::endl;
 	}
 
+	delete[] array;
+
 	return 0;
 }
