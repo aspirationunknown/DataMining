@@ -3,6 +3,11 @@
 * \file
 *
 ****************************************************************************/
+#ifndef CLUSTERING_H
+#define CLUSTERING_H
+
+#include <iostream>
+
 typedef long long ll;
 
 struct point
@@ -19,3 +24,4 @@ struct record
 	bool changed; //changed centroids
 };
 
+#endif
