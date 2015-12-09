@@ -1066,3 +1066,50 @@ namespace io{
 }
 #endif
 
+/*  Read in the data file and return an array of records
+
+Retruns true on success
+Returns the array of records in the second argument
+Returns the number of elements in that array in the third
+
+ */
+bool readCSV(std::string filename, record* &ret, int &num)
+{
+        io::CSVReader<2> in(filename);
+
+        in.read_header(io::ignore_extra_column,"GEO_LON","GEO_LAT");
+
+        double lat;
+        double lon;
+        std::vector<record> vec;
+        record* arr;
+
+        while(in.read_row(lon, lat))
+        {
+                record *temp = new record;
+                temp->location.lat = lat;
+                temp->location.lon = lon;
+                temp->centroid = 0;
+                temp->distance_from_centroid = 0;
+                vec.push_back(*temp);
+        }
+
+        int n = vec.size();
+        if (n == nullptr)
+        {
+                delete n;
+                return false;
+        }
+
+        arr = new record[n];
+        for (int i = 0; i < n; ++i)
+        {
+                arr[i] = vec[i];
+                std::cout << arr[i].location.lon << " " << arr[i].location.lat << std::endl;
+        }
+
+        ret = arr;
+        num = n;
+
+        return true;
+}
