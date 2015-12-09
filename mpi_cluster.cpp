@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "clustering.h"
+#include "csv.h"
 
 
 int main(int argc, char* argv[])
@@ -34,6 +35,8 @@ int main(int argc, char* argv[])
 	point* means; //to store the mean lat & lon for each centroid
 	ll n_centroids = 0;
 	ll n_data_points = 10000;
+	clock_t start, end;
+	double time_elapsed = 0.0;
 	
 
 
@@ -70,6 +73,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 	//start timing
+	start = clock();
 
 	for(i = 0; i < n_data_points; ++i)
 	{
@@ -86,6 +90,13 @@ int main(int argc, char* argv[])
 		centroids[i].lat = double(rand() % 1000);
 		centroids[i].lon = double(rand() % 1000);
 	}
+	//int world_size;
+	//Initialize MPI environment
+	//MPI::Init(argc, argv);
+	//tell MPI how many processors will be working on this
+	//world_size = MPI::COMM_WORLD.Get_size();
+
+
 
 	//recalculate the distance from each centroid to each point, store the index
 	//of the centroid closest to each point. keep a count of how many points
@@ -139,21 +150,23 @@ int main(int argc, char* argv[])
 			centroids[i].lat = means[i].lat / counts[i];
 			centroids[i].lon = means[i].lon / counts[i];
 		}
-		if(double(n_changed)/n_data_points > 0.01)
+		if(double(n_changed)/n_data_points > 0.38)
 			keep_going = true;
 		else
 			keep_going = false;
 		std::cout << n_changed << std::endl;
 	}
 	
-	
+	//exit the MPI environment
+	//MPI::Finalize();
 
 	
 
 	//end timing
-
+	end = clock();
+	time_elapsed = double(end - start) / CLOCKS_PER_SEC;
 	//output the total time elapsed as well as how many nodes were used.
-
+	std::cout << time_elapsed << std::endl;
 	//output to a file the list of centroids and the points that were
 	//closest to them. make this a csv file with the following format:
 	//centroid index, record x coordinate, record y coordinate 
