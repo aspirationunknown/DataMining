@@ -3,6 +3,7 @@
 * \file
 *
 ****************************************************************************/
+typedef long long ll;
 
 struct point
 {
@@ -12,7 +13,9 @@ struct point
 
 struct record
 {
-	point location; //x & y coordinates of this record
-	int centroid; //the index of the closest centroid
-	double distance_from_centroid; //distance from the closest centroid
+	point location; //lattitude & longitude coordinates of this record
+	ll centroid; //the index of the closest centroid
+	double dist; //distance from the closest centroid
+	bool changed; //changed centroids
 };
+
