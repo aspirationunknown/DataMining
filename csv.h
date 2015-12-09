@@ -32,6 +32,7 @@
 #ifndef CSV_H
 #define CSV_H
 
+#include "clustering.h"
 #include <vector>
 #include <string>
 #include <cstring>
