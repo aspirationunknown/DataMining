@@ -1074,7 +1074,7 @@ Returns the array of records in the second argument
 Returns the number of elements in that array in the third
 
  */
-bool readCSV(std::string filename, record* &ret, ll &num)
+bool readCSV(std::string filename, std::vector<record> &ret, ll &num)
 {
         io::CSVReader<2> in(filename);
 
@@ -1082,8 +1082,7 @@ bool readCSV(std::string filename, record* &ret, ll &num)
 
         double lat;
         double lon;
-        std::vector<record> vec;
-        record* arr;
+        ret.clear();
 
         while(in.read_row(lon, lat))
         {
@@ -1092,27 +1091,10 @@ bool readCSV(std::string filename, record* &ret, ll &num)
                 temp->location.lon = lon;
                 temp->centroid = 0;
                 temp->dist = 0;
-                vec.push_back(*temp);
+                ret.push_back(*temp);
         }
 
-        ll n = vec.size();
-
-        arr = new record[n];
-
-        if (arr == nullptr)
-        {
-                delete arr;
-                return false;
-        }
-
-
-        for (int i = 0; i < n; ++i)
-        {
-                arr[i] = vec[i];
-        }
-
-        ret = arr;
-        num = n;
+        num = ret.size();
 
         return true;
 }

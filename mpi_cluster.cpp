@@ -106,8 +106,8 @@ int main(int argc, char* argv[])
 	{
 		//centroids[i].lat = rand() % 1000;
 		//centroids[i].lon = rand() % 1000; 
-		fmod(rand(),(max_lat - min_lat)) + min_lat;
-		fmod(rand(),(max_lon - min_lon)) + min_lon;
+		centroids[i].lat = fmod(rand(),(max_lat - min_lat)) + min_lat;
+		centroids[i].lon = fmod(rand(),(max_lon - min_lon)) + min_lon;
 	}
 	
 	//Initialize MPI environment
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 
 	if(world_rank == 0)
 	{
-		
+
 	}
 	//recalculate the distance from each centroid to each point, store the index
 	//of the centroid closest to each point. keep a count of how many points

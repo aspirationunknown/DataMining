@@ -23,17 +23,20 @@
 #include "csv.h"
 int main(int argc, char* argv[])
 {
-	point* centroids; //array for the centroids
+	std::vector<point> centroids; //array for the centroids
 	ll n_changed = 0;
-	ll* counts;
-	record* data;
+	std::vector<ll> counts;
+	std::vector<record> data;
 	double distance = 0.0;
 	bool keep_going = true;
 	ll i, j; //loop counter
-	point* means; //to store the mean lat & lon for each centroid
+	std::vector<point> means; //to store the mean lat & lon for each centroid
+	double min_lat = 999999999.0, max_lat = -99999999.0;
+	double min_lon = 999999999.0, max_lon = -99999999.0;
 	ll n_centroids = 0;
-	ll n_data_points = 400000;
-
+	ll n_data_points = 0;
+	clock_t start, end;
+	double time_elapsed = 0.0;
 
 	//start out with k-means clustering algorithm
 	//then convert into parallel version with proper MPI send/recv
@@ -47,18 +50,21 @@ int main(int argc, char* argv[])
 	//array of records
 
 	//create the dynamic array for the centroids, using the value in argv[2]
-	n_centroids = atoi(argv[2]);
-	centroids = new(std::nothrow) point[n_centroids];
+	n_centroids = atoi(argv[1]);
+	//centroids = new(std::nothrow) point[n_centroids];
+	centroids.resize(n_centroids);
 	//create the dynamic array for the means of the cluster data points lat &
 	//lon
-	means = new(std::nothrow) point[n_centroids];
-	counts = new(std::nothrow) ll[n_centroids];
+	//means = new(std::nothrow) point[n_centroids];
+	means.resize(n_centroids);
+	//counts = new(std::nothrow) ll[n_centroids];
+	counts.resize(n_centroids);
 	//create the dynamic array for the data points
-	data = new(std::nothrow) record[n_data_points];
+	//data = new(std::nothrow) record[n_data_points];
 
 	//check for memory allocation success
-	if(centroids == nullptr || means == nullptr || counts == nullptr ||
-		data == nullptr)
+	/*
+	if(centroids == nullptr || means == nullptr || counts == nullptr)
 	{
 		std::cerr << "Memory allocation failure. Exiting." << std::endl;
 		delete [] centroids;
@@ -67,15 +73,24 @@ int main(int argc, char* argv[])
 		delete [] data;
 		return -1;
 	}
+	*/
 	//start timing
-	clock_t start = clock();
+	start = clock();
         readCSV("original_crimes.csv",data, n_data_points);
 
 	#pragma omp parallel for 
 	for(i = 0; i < n_data_points; ++i)
 	{
-		data[i].location.lat = double(rand() % 1000);
-		data[i].location.lon = double(rand() % 1000);
+		if(data[i].location.lat < min_lat)
+			min_lat = data[i].location.lat;
+		if(data[i].location.lat > max_lat)
+			max_lat = data[i].location.lat;
+		if(data[i].location.lon < min_lon)
+			min_lon = data[i].location.lon;
+		if(data[i].location.lon > max_lon)
+			max_lon = data[i].location.lon; 
+		//data[i].location.lat = rand() % 1000;
+		//data[i].location.lon = rand() % 1000;
 		data[i].centroid = -1;
 		data[i].dist = 9999999;
 		data[i].changed = false;
@@ -84,8 +99,8 @@ int main(int argc, char* argv[])
 	//create n_centroids number of random centroids and store in an array
 	for(i = 0; i < n_centroids; ++i)
 	{
-		centroids[i].lat = double(rand() % 1000);
-		centroids[i].lon = double(rand() % 1000);
+		centroids[i].lat = fmod(rand(),(max_lat - min_lat)) + min_lat;
+		centroids[i].lon = fmod(rand(),(max_lon - min_lon)) + min_lon;
 	}
 
 	//recalculate the distance from each centroid to each point, store the index
@@ -100,6 +115,7 @@ int main(int argc, char* argv[])
 		n_changed = 0;
 		//calculate distance from each centroid to each point, storing
 		//the index of the closest centroid to that point in the record
+		#pragma omp parallel for
 		for(i = 0; i < n_data_points; ++i)
 		{
 			for(j = 0; j < n_centroids; ++j)
@@ -141,17 +157,17 @@ int main(int argc, char* argv[])
 			centroids[i].lat = means[i].lat / counts[i];
 			centroids[i].lon = means[i].lon / counts[i];
 		}
-		if(double(n_changed)/n_data_points > 0.06)
+		if(double(n_changed)/n_data_points > 0.01)
 			keep_going = true;
 		else
 			keep_going = false;
-		std::cout << n_changed << std::endl;
+		//std::cout << n_changed << std::endl;
 	}
 	
 	
-	clock_t end = clock(); //end timing
-	double time = (double) (end-start) / CLOCKS_PER_SEC;
- 	printf ("Elasped time is %.2lf seconds.\n", time );	//output the total time elapsed as well as how many nodes were used.
+	end = clock(); //end timing
+	time_elapsed = (double) (end-start) / CLOCKS_PER_SEC;
+ 	printf ("Elasped time is %.2lf seconds.\n", time_elapsed );	//output the total time elapsed as well as how many nodes were used.
 
 	//output to a file the list of centroids and the points that were
 	//closest to them. make this a csv file with the following format:
@@ -159,9 +175,15 @@ int main(int argc, char* argv[])
 	//have only one record per line.
 
 	//deallocate centroids array
-	delete [] centroids;
-	delete [] data;
-	delete [] means;
+	//delete [] centroids;
+	//centroids.clear();
+	//free(centroids);
+	//delete [] data;
+	//data.clear();
+	//free(data);
+	//delete [] means;
+	//means.clear();
+	//free(means);
 
 	return 0;
 }
