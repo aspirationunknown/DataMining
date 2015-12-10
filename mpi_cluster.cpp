@@ -15,7 +15,7 @@
 *
 * **************************************************************************/
 #define CSV_IO_NO_THREAD
-//#include <mpi.h>
+#include <mpi.h>
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
@@ -37,9 +37,10 @@ int main(int argc, char* argv[])
 	double min_lat = 999999999.0, max_lat = -99999999.0;
 	double min_lon = 999999999.0, max_lon = -99999999.0;
 	ll n_centroids = 0;
-	ll n_data_points = 400000;
+	ll n_data_points = 0;
 	clock_t start, end;
 	double time_elapsed = 0.0;
+	int world_rank, world_size;
 	
 
 
@@ -108,14 +109,18 @@ int main(int argc, char* argv[])
 		fmod(rand(),(max_lat - min_lat)) + min_lat;
 		fmod(rand(),(max_lon - min_lon)) + min_lon;
 	}
-	//int world_size;
+	
 	//Initialize MPI environment
-	//MPI::Init(argc, argv);
+	MPI::Init(argc, argv);
 	//tell MPI how many processors will be working on this
-	//world_size = MPI::COMM_WORLD.Get_size();
+	world_size = MPI::COMM_WORLD.Get_size();
+	world_rank = MPI::COMM_WORLD.Get_rank();
 
 
-
+	if(world_rank == 0)
+	{
+		
+	}
 	//recalculate the distance from each centroid to each point, store the index
 	//of the centroid closest to each point. keep a count of how many points
 	//change from one centroid to another.
@@ -168,7 +173,7 @@ int main(int argc, char* argv[])
 			centroids[i].lat = means[i].lat / counts[i];
 			centroids[i].lon = means[i].lon / counts[i];
 		}
-		if(double(n_changed)/n_data_points > 0.38)
+		if(double(n_changed)/n_data_points > 0.01)
 			keep_going = true;
 		else
 			keep_going = false;
