@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "clustering.h"
-
+#include "csv.h"
 int main(int argc, char* argv[])
 {
 	point* centroids; //array for the centroids
@@ -69,6 +69,8 @@ int main(int argc, char* argv[])
 	}
 	//start timing
 	clock_t start = clock();
+        readCSV("original_crimes.csv",data, n_data_points);
+
 	#pragma omp parallel for 
 	for(i = 0; i < n_data_points; ++i)
 	{
@@ -149,7 +151,7 @@ int main(int argc, char* argv[])
 	
 	clock_t end = clock(); //end timing
 	double time = (double) (end-start) / CLOCKS_PER_SEC;
- 	printf ("Elasped time is %.2lf seconds.", time );	//output the total time elapsed as well as how many nodes were used.
+ 	printf ("Elasped time is %.2lf seconds.\n", time );	//output the total time elapsed as well as how many nodes were used.
 
 	//output to a file the list of centroids and the points that were
 	//closest to them. make this a csv file with the following format:
