@@ -1074,7 +1074,7 @@ Returns the array of records in the second argument
 Returns the number of elements in that array in the third
 
  */
-bool readCSV(std::string filename, record* &ret, int &num)
+bool readCSV(std::string filename, record* &ret, ll &num)
 {
         io::CSVReader<2> in(filename);
 
@@ -1095,7 +1095,7 @@ bool readCSV(std::string filename, record* &ret, int &num)
                 vec.push_back(*temp);
         }
 
-        int n = vec.size();
+        ll n = vec.size();
 
         arr = new record[n];
 
